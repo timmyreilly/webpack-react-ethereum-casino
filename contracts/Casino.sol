@@ -1,9 +1,5 @@
 pragma solidity ^0.4.11; 
 
-
-
-
-
 contract Casino {
     address owner;
     uint minimumBet = 100 finney; 
@@ -29,8 +25,9 @@ contract Casino {
     function() payable {}
 
     function kill() {
-        if(msg.sender == owner)
-            selfdestruct(owner) 
+        if(msg.sender == owner){
+            selfdestruct(owner);  
+        }
     }
 
     function checkPlayerExists(address player) returns(bool) {
@@ -71,18 +68,25 @@ contract Casino {
             address playerAddress = players[i]; 
             if(playerInfo[playerAddress].numberSelected == numberWinner){
                 winners[count] = playerAddress; 
-                count++
+                count++;
             }
             delete playerInfo[playerAddress]; // delete all the players 
         }
 
-        players.length = 0; 
-
-        uint winnerEtherAmount = totalBet / winners.length // How much each winner gets 
+        uint winnerEtherAmount = totalBet / winners.length;  // How much each winner gets 
 
         for(uint j = 0; j < count; j++){
-            if(winners[j] != address(0)) // Check that the address in this fixed array is not empty 
+            if(winners[j] != address(0)){ // Check that the address in this fixed array is not empty 
                 winners[j].transfer(winnerEtherAmount); 
+            }
         }
+
+        resetData();
+    }
+
+    function resetData() {
+        players.length = 0; // Delete all the players array 
+        totalBet = 0; 
+        numberOfBets = 0; 
     }
 }
